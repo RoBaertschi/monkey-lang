@@ -27,7 +27,7 @@ if (5 < 10) {
 
 10 == 10;
 10 != 9;
-`/
+`
 
 	tests := []struct {
 		expectedType    token.TokenType
