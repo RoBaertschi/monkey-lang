@@ -236,9 +236,14 @@ func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Ob
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
+
 	function, ok := fn.(*object.Function)
 	if !ok {
 		return newError("not a function: %s", fn.Type())
+	}
+
+	if len(function.Parameters) > len(args) {
+		return newError("not enough arguments: function expected %d, got %d", len(function.Parameters), len(args))
 	}
 
 	extendedEnv := extendFunctionEnv(function, args)

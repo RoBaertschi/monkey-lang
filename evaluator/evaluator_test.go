@@ -189,6 +189,7 @@ if (10 > 1) {
 			"foobar",
 			"identifier not found: foobar",
 		},
+		{"fn(x) {x}()", "not enough arguments: function expected 1, got 0"},
 	}
 
 	for _, tt := range tests {
