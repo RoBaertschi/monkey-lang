@@ -1,6 +1,9 @@
 package evaluator
 
-import "monkey/object"
+import (
+	"fmt"
+	"monkey/object"
+)
 
 func wrongArgumentAmount(want, got int) object.Object {
 	return newError("wrong number of arguments. got=%d, want=%d", got, want)
@@ -100,6 +103,15 @@ var builtins = map[string]*object.Builtin{
 
 			return &object.Array{Elements: newElements}
 
+		},
+	},
+	"puts": {
+		Fn: func(args ...object.Object) object.Object {
+			for _, arg := range args {
+				fmt.Println(arg.Inspect())
+			}
+
+			return NULL
 		},
 	},
 }
