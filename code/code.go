@@ -6,6 +6,48 @@ import (
 	"fmt"
 )
 
+const (
+	// Constants operations
+	OpConstant Opcode = iota
+
+	// Arthmetic operations
+	OpAdd
+	OpSub
+	OpMul
+	OpDiv
+
+	OpEqual
+	OpNotEqual
+	OpGreaterThan
+
+	// Stack operations
+	OpPop
+
+	// Push boolean directly to stack
+	OpTrue
+	OpFalse
+
+	// Prefix
+	OpMinus
+	OpBang
+)
+
+var definitons = map[Opcode]*Definiton{
+	OpConstant:    {"OpConstant", []int{2}},
+	OpAdd:         {"OpAdd", []int{}},
+	OpSub:         {"OpSub", []int{}},
+	OpMul:         {"OpMul", []int{}},
+	OpDiv:         {"OpDiv", []int{}},
+	OpPop:         {"OpPop", []int{}},
+	OpTrue:        {"OpTrue", []int{}},
+	OpFalse:       {"OpFalse", []int{}},
+	OpEqual:       {"OpEqual", []int{}},
+	OpNotEqual:    {"OpNotEqual", []int{}},
+	OpGreaterThan: {"OpGreaterThan", []int{}},
+	OpMinus:       {"OpMinus", []int{}},
+	OpBang:        {"OpBang", []int{}},
+}
+
 type Instructions []byte
 
 func (ins Instructions) String() string {
@@ -38,6 +80,8 @@ func (ins Instructions) fmtInstruction(def *Definiton, operands []int) string {
 	}
 
 	switch operandCount {
+	case 0:
+		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	}
@@ -47,17 +91,9 @@ func (ins Instructions) fmtInstruction(def *Definiton, operands []int) string {
 
 type Opcode byte
 
-const (
-	OpConstant Opcode = iota
-)
-
 type Definiton struct {
 	Name          string
 	OperandWidths []int
-}
-
-var definitons = map[Opcode]*Definiton{
-	OpConstant: {"OpConstant", []int{2}},
 }
 
 func Lookup(op byte) (*Definiton, error) {
