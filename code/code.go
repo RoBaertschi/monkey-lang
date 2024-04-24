@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+//goland:noinspection ALL
 const (
 	// Constants operations
 	OpConstant Opcode = iota
@@ -30,22 +31,28 @@ const (
 	// Prefix
 	OpMinus
 	OpBang
+
+	// Jumps
+	OpJumpNotTruthy
+	OpJump
 )
 
-var definitons = map[Opcode]*Definiton{
-	OpConstant:    {"OpConstant", []int{2}},
-	OpAdd:         {"OpAdd", []int{}},
-	OpSub:         {"OpSub", []int{}},
-	OpMul:         {"OpMul", []int{}},
-	OpDiv:         {"OpDiv", []int{}},
-	OpPop:         {"OpPop", []int{}},
-	OpTrue:        {"OpTrue", []int{}},
-	OpFalse:       {"OpFalse", []int{}},
-	OpEqual:       {"OpEqual", []int{}},
-	OpNotEqual:    {"OpNotEqual", []int{}},
-	OpGreaterThan: {"OpGreaterThan", []int{}},
-	OpMinus:       {"OpMinus", []int{}},
-	OpBang:        {"OpBang", []int{}},
+var definitions = map[Opcode]*Definition{
+	OpConstant:      {"OpConstant", []int{2}},
+	OpAdd:           {"OpAdd", []int{}},
+	OpSub:           {"OpSub", []int{}},
+	OpMul:           {"OpMul", []int{}},
+	OpDiv:           {"OpDiv", []int{}},
+	OpPop:           {"OpPop", []int{}},
+	OpTrue:          {"OpTrue", []int{}},
+	OpFalse:         {"OpFalse", []int{}},
+	OpEqual:         {"OpEqual", []int{}},
+	OpNotEqual:      {"OpNotEqual", []int{}},
+	OpGreaterThan:   {"OpGreaterThan", []int{}},
+	OpMinus:         {"OpMinus", []int{}},
+	OpBang:          {"OpBang", []int{}},
+	OpJumpNotTruthy: {"OpJumpNotTruthy", []int{2}},
+	OpJump:          {"OpJump", []int{2}},
 }
 
 type Instructions []byte
@@ -72,7 +79,7 @@ func (ins Instructions) String() string {
 	return out.String()
 }
 
-func (ins Instructions) fmtInstruction(def *Definiton, operands []int) string {
+func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 	operandCount := len(def.OperandWidths)
 
 	if len(operands) != operandCount {
@@ -91,13 +98,13 @@ func (ins Instructions) fmtInstruction(def *Definiton, operands []int) string {
 
 type Opcode byte
 
-type Definiton struct {
+type Definition struct {
 	Name          string
 	OperandWidths []int
 }
 
-func Lookup(op byte) (*Definiton, error) {
-	def, ok := definitons[Opcode(op)]
+func Lookup(op byte) (*Definition, error) {
+	def, ok := definitions[Opcode(op)]
 	if !ok {
 		return nil, fmt.Errorf("opcode %d undefined", op)
 	}
@@ -106,7 +113,7 @@ func Lookup(op byte) (*Definiton, error) {
 }
 
 func Make(op Opcode, operands ...int) []byte {
-	def, ok := definitons[op]
+	def, ok := definitions[op]
 	if !ok {
 		return []byte{}
 	}
@@ -132,7 +139,7 @@ func Make(op Opcode, operands ...int) []byte {
 	return instruction
 }
 
-func ReadOperands(def *Definiton, ins Instructions) ([]int, int) {
+func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 	operands := make([]int, len(def.OperandWidths))
 	offset := 0
 
